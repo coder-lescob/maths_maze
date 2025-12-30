@@ -14,7 +14,7 @@ VideoStatus InitRendering(char *name, const uint32_t width, const uint32_t heigh
     // create the window needed
     status.window   = SDL_CreateWindow(name, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, 0);                 // window
     status.renderer = SDL_CreateRenderer(status.window, -1, SDL_RENDERER_ACCELERATED);                                          // renderer
-    status.screen   = SDL_CreateTexture(status.renderer, SDL_PIXELFORMAT_ABGR8888, SDL_TEXTUREACCESS_STREAMING, width, height); // screen texture
+    status.screen   = SDL_CreateTexture(status.renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, width, height); // screen texture
 
     // view port size
     status.vp_width = width, status.vp_height = height;
