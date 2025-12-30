@@ -2,6 +2,8 @@ SRC     := src
 BUILD   := build
 OBJ_DIR := $(BUILD)/obj
 BIN_DIR := $(BUILD)/bin
+LD_FLAGS:= -L/usr/lib
+LD_LIB  := -lSDL2
 
 TARGET := $(BIN_DIR)/Math_maze
 
@@ -31,7 +33,7 @@ clean:
 build: $(ALLOBJ)
 	@echo "LINKING DONE"
 	@mkdir -p $(BIN_DIR)
-	@$(CC) $(CFLAGS) $(ALLOBJ) -o $(TARGET)
+	@$(CC) $(CFLAGS) $(ALLOBJ) -o $(TARGET) $(LD_FLAGS) $(LD_LIB)
 
 # compile C sources to object files
 $(OBJ_DIR)/%.o: $(SRC)/%.c

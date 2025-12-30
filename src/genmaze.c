@@ -10,7 +10,7 @@ Cell *InitializeCells(uint num) {
     if (!cells) return NULL;
 
     // initialize all cells
-    for (int i = 0; i < num; i++)
+    for (uint i = 0; i < num; i++)
         cells[i] = NewCell(i);
 
     // returns the cells
