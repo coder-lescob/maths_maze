@@ -11,7 +11,11 @@ void Render(uint32_t *pixels, int width, VideoStatus *status) {
     }
 }
 
+void HandleEvents(VideoStatus *status) {
+    if (status->event.type == SDL_KEYDOWN && status->event.key.keysym.sym == SDLK_ESCAPE) status->running = 0;
+}
+
 int main(void) {
-    StartVideo("maths maze", 640, 480, NULL, NULL, Render);
+    StartVideo("maths maze", 0, 0, HandleEvents, NULL, Render);
     return 0;
 }

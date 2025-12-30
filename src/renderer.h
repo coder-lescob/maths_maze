@@ -30,7 +30,7 @@ int InitVideo(void);
 * @param height The height of the view port.
 * @returns The videoStatus of the rendering.
 */
-VideoStatus InitRendering(char *name, const uint32_t width, const uint32_t height);
+VideoStatus InitRendering(char *name, uint32_t width, uint32_t height);
 
 /*
 * Start video rendering with event handling and Update.
