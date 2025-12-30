@@ -1,8 +1,12 @@
 #pragma once
 
 #include <SDL2/SDL.h>
+#include <stdio.h>
 
 typedef struct VideoStatus {
+    // init stuff
+    int initialized;
+
     // window rendering ptrs
     SDL_Window   *window;
     SDL_Renderer *renderer;

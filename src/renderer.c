@@ -1,8 +1,11 @@
 #include "renderer.h"
 
+#define InitError (VideoStatus){.initialized = 0}
+#define ErrorCheck(ptr, ret) if (!ptr) { fprintf(stderr, "Error occurred: %s\n", SDL_GetError()); return ret;}
+
 int InitVideo(void) {
     if (SDL_Init(SDL_INIT_VIDEO) != 0) {
-        fprintf(stderr, "Video Initialization fails: %s\n", SDL_GetError());
+        fprintf(stderr, "Video Initialization failed: %s\n", SDL_GetError());
         return 1;
     }
     return 0;
@@ -17,17 +20,25 @@ VideoStatus InitRendering(char *name, uint32_t width, uint32_t height) {
         width = rect.w, height = rect.h;
     }
 
-    // create the window needed
-    status.window   = SDL_CreateWindow(name, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_FULLSCREEN); // window
-    status.renderer = SDL_CreateRenderer(status.window, -1, SDL_RENDERER_ACCELERATED);                                              // renderer
-    status.screen   = SDL_CreateTexture(status.renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, width, height);     // screen texture
+    // creates window
+    status.window   = SDL_CreateWindow(name, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_FULLSCREEN_DESKTOP);
+    ErrorCheck(status.window, InitError);
+
+    // creates renderer
+    status.renderer = SDL_CreateRenderer(status.window, -1, SDL_RENDERER_ACCELERATED);
+    ErrorCheck(status.renderer, InitError);
+
+    // create the screen texture
+    status.screen   = SDL_CreateTexture(status.renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, width, height);
+    ErrorCheck(status.screen, InitError);
 
     // view port size
     status.vp_width = width, status.vp_height = height;
 
     // Video metadata
-    status.running    = 1;
-    status.frameCount = 0;
+    status.running     = 1;
+    status.frameCount  = 0;
+    status.initialized = 1;
 
     return status;
 }
@@ -59,9 +70,19 @@ void (*HandleEvents)(VideoStatus *), void (*Update)(VideoStatus *), void (*Rende
     // create video status
     VideoStatus status = InitRendering(name, width, height);
 
+    // init fails
+    if (!status.initialized) {
+        // cleanup allocated mem
+        DestroyVideo(&status);
+        return 1;
+    }
+
     // run Init
     if (Init) 
         (*Init)(&status);
+
+    // runtime error flag
+    int runtimeError = 0;
 
     while (status.running) {
         // first poll events
@@ -73,17 +94,18 @@ void (*HandleEvents)(VideoStatus *), void (*Update)(VideoStatus *), void (*Rende
 
         // lock the texture data declaration
         void *pixels;
-        int  lockWidth;
+        int  bytesPerRow;
 
         // lock texture
-        if (SDL_LockTexture(status.screen, NULL, &pixels, &lockWidth)) {
+        if (SDL_LockTexture(status.screen, NULL, &pixels, &bytesPerRow)) {
             fprintf(stderr, "Error while locking texture: %s\n", SDL_GetError());
-            return 1;
+            runtimeError = 1;
+            break;
         }
 
         // call the Render function
         if (Render) 
-            (*Render)(pixels, lockWidth, &status);
+            (*Render)(pixels, bytesPerRow, &status);
 
         // unlock texture
         SDL_UnlockTexture(status.screen);
@@ -95,14 +117,14 @@ void (*HandleEvents)(VideoStatus *), void (*Update)(VideoStatus *), void (*Rende
     // destroy every thing
     DestroyVideo(&status);
 
-    return 0;
+    return runtimeError;
 }
 
 void DestroyVideo(VideoStatus *status) {
     // destroy
-    SDL_DestroyTexture (status->screen);   // screen texture
-    SDL_DestroyRenderer(status->renderer); // renderer
-    SDL_DestroyWindow  (status->window);   // window
+    if (status->screen)   SDL_DestroyTexture (status->screen);   // screen texture
+    if (status->renderer) SDL_DestroyRenderer(status->renderer); // renderer
+    if (status->window)   SDL_DestroyWindow  (status->window);   // window
 
     // quits SDL
     SDL_Quit();

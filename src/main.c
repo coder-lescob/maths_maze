@@ -1,14 +1,15 @@
 #include <stdio.h>
+#include "types.h"
 #include "genmaze.h"
 #include "renderer.h"
 
 Maze *maze;
 
-void Render(uint32_t *pixels, int width, VideoStatus *status) {
+void Render(uint32_t *pixels, int bytesPerRow, VideoStatus *status) {
     // all pixels in red
     for (uint32_t y = 0; y < status->vp_height; y++) {
         for (uint32_t x = 0; x < status->vp_width; x++) {
-            uint32_t *pix = (uint32_t *)((uint8_t *)pixels + y * width) + x;
+            uint32_t *pix = (uint32_t *)((uint8_t *)pixels + y * bytesPerRow) + x;
             *pix = 0xFFFF0000; // red
         }
     }
