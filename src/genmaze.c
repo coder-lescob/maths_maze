@@ -47,13 +47,17 @@ Maze *GenerateMaze(uint width, uint height) {
 void FreeMaze(Maze *maze) {
     // if no maze present
     if (!maze) {
-        printf("No maze to be freed.");
+        printf("No maze to be freed.\n");
         return;
     }
 
     // free all cells
-    free(maze->cells);
+    if (maze->cells){
+        free(maze->cells);
+        maze->cells = NULL;
+    }
 
     // free the maze
     free(maze);
+    maze = NULL;
 }

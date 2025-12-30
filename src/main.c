@@ -2,7 +2,7 @@
 #include "genmaze.h"
 #include "renderer.h"
 
-static Maze *maze;
+Maze *maze;
 
 void Render(uint32_t *pixels, int width, VideoStatus *status) {
     // all pixels in red
@@ -18,7 +18,12 @@ void HandleEvents(VideoStatus *status) {
     if (status->event.type == SDL_KEYDOWN && status->event.key.keysym.sym == SDLK_ESCAPE) status->running = 0;
 }
 
+void Init(VideoStatus *status) {
+    maze = AllocateMaze(100, 100);
+}
+
 int main(void) {
-    StartVideo("maths maze", 0, 0, NULL, HandleEvents, NULL, Render);
+    StartVideo("maths maze", 0, 0, Init, HandleEvents, NULL, Render);
+    FreeMaze(maze);
     return 0;
 }

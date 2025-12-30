@@ -59,12 +59,17 @@ void (*HandleEvents)(VideoStatus *), void (*Update)(VideoStatus *), void (*Rende
     // create video status
     VideoStatus status = InitRendering(name, width, height);
 
+    // run Init
+    if (Init) 
+        (*Init)(&status);
+
     while (status.running) {
         // first poll events
         PollEvents(&status, HandleEvents);
 
         // call the Update function of user
-        if (Update) (*Update)(&status);
+        if (Update) 
+            (*Update)(&status);
 
         // lock the texture data declaration
         void *pixels;
@@ -77,7 +82,8 @@ void (*HandleEvents)(VideoStatus *), void (*Update)(VideoStatus *), void (*Rende
         }
 
         // call the Render function
-        if (Render) (*Render)(pixels, lockWidth, &status);
+        if (Render) 
+            (*Render)(pixels, lockWidth, &status);
 
         // unlock texture
         SDL_UnlockTexture(status.screen);
