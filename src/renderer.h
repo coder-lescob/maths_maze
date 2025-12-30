@@ -39,12 +39,13 @@ VideoStatus InitRendering(char *name, uint32_t width, uint32_t height);
 * @param name The name of the window.
 * @param width The width of the window view port.
 * @param height The height of the view port.
+* @param Inir A pointer to a function run once at the begining.
 * @param HandleEvents A pointer to a function that handles events.
 * @param Update A pointer to a function that will be run every frame, not meant for rendering.
 * @param Render A pointer to a function that will be run every frame with the screen pointer lock to render stuff on the screen.
 * @returns 0 if it exited normally, 1 if there were an error.
 */
-int StartVideo(char *name, const uint32_t width, const uint32_t height, 
+int StartVideo(char *name, const uint32_t width, const uint32_t height, void (*Init)(VideoStatus *),
     void (*HandleEvents)(VideoStatus *), void (*Update)(VideoStatus *), void (*Render)(uint32_t *, int, VideoStatus *));
 
 /*

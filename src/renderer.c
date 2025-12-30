@@ -51,7 +51,7 @@ void PollEvents(VideoStatus *status, void (*HandleEvents)(VideoStatus *)) {
     }
 }
 
-int StartVideo(char *name, const uint32_t width, const uint32_t height, 
+int StartVideo(char *name, const uint32_t width, const uint32_t height, void (*Init)(VideoStatus *),
 void (*HandleEvents)(VideoStatus *), void (*Update)(VideoStatus *), void (*Render)(uint32_t *, int, VideoStatus *)) {
     // Init video
     if (InitVideo()) return 1;
