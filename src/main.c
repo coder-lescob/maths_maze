@@ -45,8 +45,6 @@ void Render(uint32_t *pixels, int bytesPerRow, VideoStatus *status) {
             uint cx = pixX + CellSize -1, cy = pixY + CellSize -1;
             uint dx = pixX              , dy = pixY + CellSize -1;
 
-            //if (status->frameCount == 0) printf("%d; %d\n", x, y);
-
             /* 
             * walls are:
             * top cd
