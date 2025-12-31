@@ -31,7 +31,11 @@ void Init(VideoStatus *status) {
 }
 
 int main(void) {
-    StartVideo("maths maze", 0, 0, Init, HandleEvents, NULL, RenderMaze);
-    FreeMaze(maze);
+    /*StartVideo("maths maze", 0, 0, Init, HandleEvents, NULL, RenderMaze);
+    FreeMaze(maze);*/
+    Stack stack = NewStack(60);
+    Push(stack, 128);
+    printf("%d\n", Pop(stack));
+    FreeStack(stack);
     return 0;
 }
