@@ -7,7 +7,7 @@ static Maze *maze;
 
 #define CellSize 32
 
-void Render(uint32_t *pixels, int bytesPerRow, VideoStatus *status) {
+void RenderMaze(uint32_t *pixels, int bytesPerRow, VideoStatus *status) {
     // rendering maze
     if (!maze || !maze->cells) return;
 
@@ -31,7 +31,7 @@ void Init(VideoStatus *status) {
 }
 
 int main(void) {
-    StartVideo("maths maze", 0, 0, Init, HandleEvents, NULL, Render);
+    StartVideo("maths maze", 0, 0, Init, HandleEvents, NULL, RenderMaze);
     FreeMaze(maze);
     return 0;
 }
