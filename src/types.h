@@ -5,6 +5,7 @@
 /* An unsigned integer */
 typedef unsigned int uint;
 
+/* A stack */
 typedef struct Stack {
     int stackPtr;
     int capacity;
