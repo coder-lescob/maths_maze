@@ -5,35 +5,47 @@
 
 Maze *maze;
 
-uint GetPixIdx(uint x, uint y, uint bytesPerRow) {
-    return x + (y * bytesPerRow) / sizeof(uint32_t);
+#define CellSize 32
+
+uint32_t *GetPix(uint32_t *pix, int bytesPerRow, uint32_t x, uint32_t y) {
+    if (bytesPerRow <= 0) return NULL;
+    return (uint32_t *)((uint8_t *)pix + y * bytesPerRow) + x;
 }
 
-void RenderVertWall(uint p1, uint p2, uint32_t *pixels, uint bytesPerRow) {
-    // assumes x are the same
-    /*for (uint i = p1; i < p2; i += bytesPerRow / sizeof(uint32_t)) {
-        pixels[i] = 0xFFFFFFFF; // white
-    }*/
-    /* doesn't work (segmentation fault) */
-    for (uint i = p1; i < p2; i ++/*= bytesPerRow / sizeof(uint32_t)*/) {
-        pixels[i] = 0xFFFFFFFF; // white
+void DrawPix(uint32_t *pixels, int bytesPerRow, uint x, uint y, uint32_t col) {
+    uint32_t *pix = GetPix(pixels, bytesPerRow, x, y);
+    if (!pix) return;
+    *pix = col;
+}
+
+void DrawVert(uint32_t *pixels, int bytesPerRow, uint x, uint y1, uint y2) {
+    for (uint y = y1; y < y2; y++) {
+        DrawPix(pixels, bytesPerRow, x, y, 0xFFFFFFFF /* white */ );
+    }
+}
+
+void DrawHorz(uint32_t *pixels, int bytesPerRow, uint y, uint x1, uint x2) {
+    for (uint x = x1; x < x2; x++) {
+        DrawPix(pixels, bytesPerRow, x, y, 0xFFFFFFFF /* white */ );
     }
 }
 
 void Render(uint32_t *pixels, int bytesPerRow, VideoStatus *status) {
     // rendering maze
-    if (!maze) return;
+    if (!maze || !maze->cells) return;
 
     // loop over each cell
-    for (uint y = 0; y < maze->height-1; y++) {
-        for (uint x = 0; x < maze->width-1; x++) {
+    for (uint y = 0; y < maze->height; y++) {
+        for (uint x = 0; x < maze->width; x++) {
             uint cellIdx = x + y * maze->width;
             // render the cell based on its four walls
-            uint pixX = x * 32, pixY = y * 32;
-            uint a = GetPixIdx(pixX     , pixY     , bytesPerRow);
-            uint b = GetPixIdx(pixX + 31, pixY     , bytesPerRow);
-            uint c = GetPixIdx(pixX + 31, pixY + 31, bytesPerRow);
-            uint d = GetPixIdx(pixX     , pixY + 31, bytesPerRow);
+            uint pixX = x * CellSize, pixY = y * CellSize;
+            uint ax = pixX              , ay = pixY              ;
+            uint bx = pixX + CellSize -1, by = pixY              ;
+            uint cx = pixX + CellSize -1, cy = pixY + CellSize -1;
+            uint dx = pixX              , dy = pixY + CellSize -1;
+
+            //if (status->frameCount == 0) printf("%d; %d\n", x, y);
 
             /* 
             * walls are:
@@ -42,26 +54,22 @@ void Render(uint32_t *pixels, int bytesPerRow, VideoStatus *status) {
             * right bc
             * left ad
             */
-            pixels[a] = 0xFFFF0000; // red
-            pixels[b] = 0xFF00FF00; // green
-            pixels[c] = 0xFF0000FF; // blue
-            pixels[d] = 0xFFFFFFFF; // white
-
-            for (uint i = a; i < b; i++)
-                pixels[i] = 0xFFFFFF00;
-
-            for (uint i = d; i < c; i++)
-                pixels[i] = 0xFFFF00FF;
+            if (maze->cells[cellIdx].topWall)   DrawHorz(pixels, bytesPerRow, dy, dx, cx);
+            if (maze->cells[cellIdx].bottomWall)DrawHorz(pixels, bytesPerRow, ay, ax, bx);
+            if (maze->cells[cellIdx].rightWall) DrawVert(pixels, bytesPerRow, bx, by, cy);
+            if (maze->cells[cellIdx].leftWall)  DrawVert(pixels, bytesPerRow, ax, ay, dy);
         }
     }
 }
 
 void HandleEvents(VideoStatus *status) {
+    // if ESC press quit
     if (status->event.type == SDL_KEYDOWN && status->event.key.keysym.sym == SDLK_ESCAPE) status->running = 0;
 }
 
 void Init(VideoStatus *status) {
-    maze = AllocateMaze(100, 100);
+    maze = AllocateMaze(status->vp_width / CellSize - 1, status->vp_height / CellSize - 1);
+    printf("res %dx%d\n", status->vp_width, status->vp_height);
 }
 
 int main(void) {
