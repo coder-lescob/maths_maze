@@ -26,7 +26,7 @@ void HandleEvents(VideoStatus *status) {
 }
 
 void Init(VideoStatus *status) {
-    maze = AllocateMaze(status->vp_width / CellSize - 1, status->vp_height / CellSize - 1);
+    maze = AllocateMaze(status->vp_width / CellSize, status->vp_height / CellSize);
     printf("res %dx%d\n", status->vp_width, status->vp_height);
 }
 
