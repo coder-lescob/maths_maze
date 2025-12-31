@@ -129,3 +129,52 @@ void DestroyVideo(VideoStatus *status) {
     // quits SDL
     SDL_Quit();
 }
+
+uint32_t *GetPix(uint32_t *pix, int bytesPerRow, uint32_t x, uint32_t y) {
+    if (bytesPerRow <= 0) return NULL;
+    return (uint32_t *)((uint8_t *)pix + y * bytesPerRow) + x;
+}
+
+void DrawPix(uint32_t *pixels, int bytesPerRow, uint x, uint y, uint32_t col) {
+    uint32_t *pix = GetPix(pixels, bytesPerRow, x, y);
+    if (!pix) return;
+    *pix = col;
+}
+
+void DrawVert(uint32_t *pixels, int bytesPerRow, uint x, uint y1, uint y2) {
+    for (uint y = y1; y < y2; y++) {
+        DrawPix(pixels, bytesPerRow, x, y, 0xFFFFFFFF /* white */ );
+    }
+}
+
+void DrawHorz(uint32_t *pixels, int bytesPerRow, uint y, uint x1, uint x2) {
+    for (uint x = x1; x < x2; x++) {
+        DrawPix(pixels, bytesPerRow, x, y, 0xFFFFFFFF /* white */ );
+    }
+}
+
+void RenderCell(Maze *maze, uint cellSize, uint x, uint y, uint32_t *pixels, int bytesPerRow) {
+    // get the cell index
+    uint cellIdx = x + y * maze->width;
+
+    // get its four corners pix coords
+    uint pixX = x * cellSize, pixY = y * cellSize;
+    uint ax = pixX              , ay = pixY              ;
+    uint bx = pixX + cellSize -1, by = pixY              ;
+    uint cx = pixX + cellSize -1, cy = pixY + cellSize -1;
+    uint dx = pixX              , dy = pixY + cellSize -1;
+
+    /* 
+    * walls are:
+    * top cd
+    * bottom ab
+    * right bc
+    * left ad
+    */
+    
+    // draw lines to forme wall it it it does exist
+    if (maze->cells[cellIdx].topWall)   DrawHorz(pixels, bytesPerRow, dy, dx, cx);
+    if (maze->cells[cellIdx].bottomWall)DrawHorz(pixels, bytesPerRow, ay, ax, bx);
+    if (maze->cells[cellIdx].rightWall) DrawVert(pixels, bytesPerRow, bx, by, cy);
+    if (maze->cells[cellIdx].leftWall)  DrawVert(pixels, bytesPerRow, ax, ay, dy);
+}

@@ -2,6 +2,8 @@
 
 #include <SDL2/SDL.h>
 #include <stdio.h>
+#include "types.h"
+#include "genmaze.h"
 
 typedef struct VideoStatus {
     // init stuff
@@ -57,3 +59,56 @@ int StartVideo(char *name, const uint32_t width, const uint32_t height, void (*I
 * @param status The video status to destroy.
 */
 void DestroyVideo(VideoStatus *status);
+
+/*
+* Compute the pointer to the corresponding pixel.
+* TODO: Make it safe to disallow pixels outside of the screen.
+* @param pix         The pointer to the first pixel aka to the array of pixels.
+* @param bytesPerRow The number of byte in a row of pixel refered also as pitch.
+* @param x           The x coordonate of the pixel.
+* @param y           The y coordonate of the pixel.
+* @returns A pointer to the corresponding pixel.
+*/
+uint32_t *GetPix(uint32_t *pix, int bytesPerRow, uint32_t x, uint32_t y);
+
+/*
+* Draws a pixel at (x,y) of color col.
+* @param pixels      The pointer to the first pixel aka to the array of pixels.
+* @param bytesPerRow The number of byte in a row of pixel refered also as pitch.
+* @param x           The x coordonate of the pixel.
+* @param y           The y coordonate of the pixel.
+*/
+void DrawPix(uint32_t *pixels, int bytesPerRow, uint x, uint y, uint32_t col);
+
+/*
+* Draws an vertical line from (x, y1) to (x, y2) on the pixels.
+* NOTE: y1 must be less than y2.
+* @param pixels      The pointer to the first pixel aka to the array of pixels.
+* @param bytesPerRow The number of byte in a row of pixel refered also as pitch.
+* @param x           The x coordonate of the line.
+* @param y1          The initial coordonate of the line.
+* @param y2          The final coordonate of the line.
+*/
+void DrawVert(uint32_t *pixels, int bytesPerRow, uint x, uint y1, uint y2);
+
+/*
+* Draws an horizonatal line from (x1, y) to (x2, y) on the pixels.
+* NOTE: x1 must be less than x2.
+* @param pixels      The pointer to the first pixel aka to the array of pixels.
+* @param bytesPerRow The number of byte in a row of pixel refered also as pitch.
+* @param y           The y coordonate of the line.
+* @param x1          The initial coordonate of the line.
+* @param x2          The final coordonate of the line.
+*/
+void DrawHorz(uint32_t *pixels, int bytesPerRow, uint y, uint x1, uint x2);
+
+/*
+* Render the cell at (x, y) from a maze in the pixels buffer.
+* @param maze        The maze where is the cell.
+* @param cellSize    The size of a cell on the screen.
+* @param x           The x coords of the cell.
+* @param y           The y coords of the cell.
+* @param pixels      The pointer to the first pixel aka to the array of pixels.
+* @param bytesPerRow The number of byte in a row of pixel refered also as pitch.
+*/
+void RenderCell(Maze *maze, uint cellSize, uint x, uint y, uint32_t *pixels, int bytesPerRow);
