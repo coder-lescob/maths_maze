@@ -30,6 +30,28 @@ void DrawHorz(uint32_t *pixels, int bytesPerRow, uint y, uint x1, uint x2) {
     }
 }
 
+void RenderCell(uint x, uint y, uint32_t *pixels, int bytesPerRow) {
+    uint cellIdx = x + y * maze->width;
+    // render the cell based on its four walls
+    uint pixX = x * CellSize, pixY = y * CellSize;
+    uint ax = pixX              , ay = pixY              ;
+    uint bx = pixX + CellSize -1, by = pixY              ;
+    uint cx = pixX + CellSize -1, cy = pixY + CellSize -1;
+    uint dx = pixX              , dy = pixY + CellSize -1;
+
+    /* 
+    * walls are:
+    * top cd
+    * bottom ab
+    * right bc
+    * left ad
+    */
+    if (maze->cells[cellIdx].topWall)   DrawHorz(pixels, bytesPerRow, dy, dx, cx);
+    if (maze->cells[cellIdx].bottomWall)DrawHorz(pixels, bytesPerRow, ay, ax, bx);
+    if (maze->cells[cellIdx].rightWall) DrawVert(pixels, bytesPerRow, bx, by, cy);
+    if (maze->cells[cellIdx].leftWall)  DrawVert(pixels, bytesPerRow, ax, ay, dy);
+}
+
 void Render(uint32_t *pixels, int bytesPerRow, VideoStatus *status) {
     // rendering maze
     if (!maze || !maze->cells) return;
@@ -37,25 +59,8 @@ void Render(uint32_t *pixels, int bytesPerRow, VideoStatus *status) {
     // loop over each cell
     for (uint y = 0; y < maze->height; y++) {
         for (uint x = 0; x < maze->width; x++) {
-            uint cellIdx = x + y * maze->width;
-            // render the cell based on its four walls
-            uint pixX = x * CellSize, pixY = y * CellSize;
-            uint ax = pixX              , ay = pixY              ;
-            uint bx = pixX + CellSize -1, by = pixY              ;
-            uint cx = pixX + CellSize -1, cy = pixY + CellSize -1;
-            uint dx = pixX              , dy = pixY + CellSize -1;
-
-            /* 
-            * walls are:
-            * top cd
-            * bottom ab
-            * right bc
-            * left ad
-            */
-            if (maze->cells[cellIdx].topWall)   DrawHorz(pixels, bytesPerRow, dy, dx, cx);
-            if (maze->cells[cellIdx].bottomWall)DrawHorz(pixels, bytesPerRow, ay, ax, bx);
-            if (maze->cells[cellIdx].rightWall) DrawVert(pixels, bytesPerRow, bx, by, cy);
-            if (maze->cells[cellIdx].leftWall)  DrawVert(pixels, bytesPerRow, ax, ay, dy);
+            // renders it
+            RenderCell(x, y, pixels, bytesPerRow);
         }
     }
 }
