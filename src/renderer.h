@@ -89,7 +89,7 @@ void DrawPix(uint32_t *pixels, int bytesPerRow, uint x, uint y, uint32_t col);
 * @param y1          The initial coordonate of the line.
 * @param y2          The final coordonate of the line.
 */
-void DrawVert(uint32_t *pixels, int bytesPerRow, uint x, uint y1, uint y2);
+void DrawVert(uint32_t *pixels, int bytesPerRow, uint x, uint y1, uint y2, uint32_t color);
 
 /*
 * Draws an horizonatal line from (x1, y) to (x2, y) on the pixels.
@@ -100,7 +100,7 @@ void DrawVert(uint32_t *pixels, int bytesPerRow, uint x, uint y1, uint y2);
 * @param x1          The initial coordonate of the line.
 * @param x2          The final coordonate of the line.
 */
-void DrawHorz(uint32_t *pixels, int bytesPerRow, uint y, uint x1, uint x2);
+void DrawHorz(uint32_t *pixels, int bytesPerRow, uint y, uint x1, uint x2, uint32_t color);
 
 /*
 * Render the cell at (x, y) from a maze in the pixels buffer.

@@ -2,6 +2,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <math.h>
 #include "types.h"
 
 /*
@@ -10,7 +11,7 @@
 */
 typedef struct Cell {
     // the index of the cell in the maze grid
-    uint i;
+    uint i, x, y;
 
     // walls: 1 = present, 0 = absent
     uint topWall    : 1;
@@ -29,16 +30,22 @@ typedef struct Cell {
 typedef struct Maze {
     uint width;   // number of cells in width
     uint height;  // number of cells in height
-    Cell* cells;  // pointer to the array of cells
+    Cell *cells;  // pointer to the array of cells
+
+    // maze generation
+    int   generated;
+    Cell *currentCell;
+    Stack vistedCells;
 } Maze;
 
 /*
 * Initialize cells with all walls on, not visited yet with the right index.
 * NOTE : cells are allocated on the heap please free them after usage.
-* @param num The number of cells in the maze.
+* @param width  How wide is the maze in cells ?
+* @param height How high is the maze in cells ?
 * @returns The pointer to cells.
 */
-Cell *InitializeCells(uint num);
+Cell *InitializeCells(uint width, uint height);
 
 /*
 * Allocates a new maze as long as its cells.
@@ -48,6 +55,8 @@ Cell *InitializeCells(uint num);
 * @returns The pointer to the maze.
 */
 Maze *AllocateMaze(uint width, uint height);
+
+void Iteration(Maze *maze);
 
 /*
 * Generates a random maze of given width and height.
