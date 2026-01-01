@@ -95,11 +95,11 @@ void DestroyWallsBetween(Cell *current, Cell *next) {
 
 void Iteration(Maze *maze) {
     if (!maze->currentCell) return;
+    if (maze->currentCell->visited) return;
 
     maze->currentCell->visited = 1;
 
     Stack neighbors = NewStack(4);
-    uint  idx;
     Cell  *neighbor;
 
     while (1) {
@@ -109,9 +109,8 @@ void Iteration(Maze *maze) {
         // if there are any neighbor
         if (neighbors.stackPtr > 0) {
             // choose a random neighbor
-            idx = rand() % neighbors.stackPtr;
+            uint idx = rand() % neighbors.stackPtr;
             neighbor = &maze->cells[neighbors.array[idx]];
-            //srand(rand());
 
             break;
         }
