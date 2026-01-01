@@ -138,7 +138,7 @@ void Iteration(Maze *maze) {
     maze->currentCell = neighbor;
 }
 
-Maze *GenerateMaze(uint width, uint height) {
+Maze *GenerateMaze(uint width, uint height, uint seed, int generate) {
     // allocates the maze
     Maze *maze = AllocateMaze(width, height);
 
@@ -148,10 +148,12 @@ Maze *GenerateMaze(uint width, uint height) {
     maze->currentCell = &maze->cells[0];
     Push(maze->vistedCells, 0);
 
-    srand(100);
+    srand(seed);
 
-    /*while (!maze->generated)
-        Iteration(maze);*/
+    if (generate) {
+        while (!maze->generated)
+            Iteration(maze);
+    }
 
     // returns the maze
     return maze;
