@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <time.h>
 #include "types.h"
 #include "genmaze.h"
 #include "renderer.h"
@@ -43,7 +44,8 @@ void HandleEvents(VideoStatus *status) {
 }
 
 void Init(VideoStatus *status) {
-    maze = GenerateMaze((status->vp_width-1) / CellSize, (status->vp_height-1) / CellSize);
+    time_t now = time(0);
+    maze = GenerateMaze((status->vp_width-1) / CellSize, (status->vp_height-1) / CellSize, now, 1);
     printf("res %dx%d\n", status->vp_width, status->vp_height);
 }
 
