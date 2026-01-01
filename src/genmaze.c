@@ -45,14 +45,14 @@ void GetNeighbors(Maze *maze, Stack *neighbors) {
     for (int y = -1; y <= 1; y ++) {
         for (int x = -1; x <= 1; x ++) {
             // discard diagonal neighbors
-            if (fabs(x) > 0 && fabs(y) > 0) continue;
+            if (fabs((double)x) > 0.0 && fabs((double)y) > 0.0) continue;
 
             // this cell is not a neighbor of itself
             if (x == 0 && y == 0) continue;
 
             // discard neighbors outside of the screen
-            if (maze->currentCell->x + x < 0 || maze->currentCell->x + x >= maze->width)  continue;
-            if (maze->currentCell->y + y < 0 || maze->currentCell->y + y >= maze->height) continue;
+            if (maze->currentCell->x + x >= maze->width)  continue;
+            if (maze->currentCell->y + y >= maze->height) continue;
 
             uint idx = (maze->currentCell->x + x) + (maze->currentCell->y + y) * maze->width;
 

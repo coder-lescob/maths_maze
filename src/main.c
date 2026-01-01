@@ -5,7 +5,8 @@
 
 static Maze *maze;
 
-#define CellSize 32
+#define CellSize 16
+#define IterationsPerFrame 10
 
 void RenderMaze(uint32_t *pixels, int bytesPerRow, VideoStatus *status) {
     // clear the screen
@@ -31,7 +32,9 @@ void RenderMaze(uint32_t *pixels, int bytesPerRow, VideoStatus *status) {
 
 void Update(VideoStatus *status) {
     if (!maze->generated)
-        Iteration(maze);
+        if (IterationsPerFrame > 0 || (status->frameCount % (uint32_t)(1 / IterationsPerFrame)) == 0)
+            for (uint i = 0; i < IterationsPerFrame; i++)
+                Iteration(maze);
 }
 
 void HandleEvents(VideoStatus *status) {
@@ -40,7 +43,7 @@ void HandleEvents(VideoStatus *status) {
 }
 
 void Init(VideoStatus *status) {
-    maze = GenerateMaze(status->vp_width / CellSize, status->vp_height / CellSize);
+    maze = GenerateMaze((status->vp_width-1) / CellSize, (status->vp_height-1) / CellSize);
     printf("res %dx%d\n", status->vp_width, status->vp_height);
 }
 

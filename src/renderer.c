@@ -174,8 +174,6 @@ void RenderCell(Maze *maze, uint cellSize, uint x, uint y, uint32_t *pixels, int
     * right bc
     * left ad
     */
-
-    int iscurrent = maze->currentCell->i == cellIdx;
     
     // draw lines to forme wall it it it does exist
     if (maze->cells[cellIdx].topWall)   DrawHorz(pixels, bytesPerRow, dy, dx, cx, 0xFFFFFFFF /* white */);
