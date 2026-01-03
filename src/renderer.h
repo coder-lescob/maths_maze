@@ -21,7 +21,13 @@ typedef struct VideoStatus {
     int          running;
     SDL_Event    event;
     uint32_t     frameCount;
+    const Uint8  *keyboardState;
 } VideoStatus;
+
+/*
+* Polls the keyboard and stores it in the keyboard status field
+*/
+void PollKeyboard();
 
 /*
 * Init video chanel.
@@ -111,4 +117,4 @@ void DrawHorz(uint32_t *pixels, int bytesPerRow, uint y, uint x1, uint x2, uint3
 * @param pixels      The pointer to the first pixel aka to the array of pixels.
 * @param bytesPerRow The number of byte in a row of pixel refered also as pitch.
 */
-void RenderCell(Maze *maze, uint cellSize, uint x, uint y, uint32_t *pixels, int bytesPerRow);
+void RenderCell(Maze *maze, uint cellSize, uint x, uint y, uint32_t *pixels, int bytesPerRow, int highlight);

@@ -36,9 +36,10 @@ VideoStatus InitRendering(char *name, uint32_t width, uint32_t height) {
     status.vp_width = width, status.vp_height = height;
 
     // Video metadata
-    status.running     = 1;
-    status.frameCount  = 0;
-    status.initialized = 1;
+    status.running       = 1;
+    status.frameCount    = 0;
+    status.initialized   = 1;
+    status.keyboardState = SDL_GetKeyboardState(NULL);
 
     return status;
 }
@@ -60,6 +61,13 @@ void PollEvents(VideoStatus *status, void (*HandleEvents)(VideoStatus *)) {
         // call the user's handle event function
         if (HandleEvents) (*HandleEvents)(status);
     }
+}
+
+void PollKeyboard() {
+    // polls SDL internal keyboard object
+    // since status.keyboadState points 
+    // to this object it is updating the keyboard
+    SDL_PumpEvents();
 }
 
 int StartVideo(char *name, const uint32_t width, const uint32_t height, void (*Init)(VideoStatus *),
@@ -87,6 +95,9 @@ void (*HandleEvents)(VideoStatus *), void (*Update)(VideoStatus *), void (*Rende
     while (status.running) {
         // first poll events
         PollEvents(&status, HandleEvents);
+
+        // Then Poll the keyboard
+        PollKeyboard();
 
         // call the Update function of user
         if (Update) 
@@ -131,7 +142,8 @@ void DestroyVideo(VideoStatus *status) {
 }
 
 uint32_t *GetPix(uint32_t *pix, int bytesPerRow, uint32_t x, uint32_t y) {
-    if (bytesPerRow <= 0) return NULL;
+    if (bytesPerRow <= 0)                    return NULL;
+    if (x >= bytesPerRow / sizeof(uint32_t)) return NULL;
     return (uint32_t *)((uint8_t *)pix + y * bytesPerRow) + x;
 }
 
@@ -153,7 +165,7 @@ void DrawHorz(uint32_t *pixels, int bytesPerRow, uint y, uint x1, uint x2, uint3
     }
 }
 
-void RenderCell(Maze *maze, uint cellSize, uint x, uint y, uint32_t *pixels, int bytesPerRow) {
+void RenderCell(Maze *maze, uint cellSize, uint x, uint y, uint32_t *pixels, int bytesPerRow, int highlight) {
     // get the cell index
     uint cellIdx = x + y * maze->width;
 
@@ -166,6 +178,12 @@ void RenderCell(Maze *maze, uint cellSize, uint x, uint y, uint32_t *pixels, int
     uint bx = pixX + cellSize, by = pixY           ;
     uint cx = pixX + cellSize, cy = pixY + cellSize;
     uint dx = pixX           , dy = pixY + cellSize;
+
+    // highlight the cell if needed
+    if (highlight){
+        for (uint x = ax; x < bx; x++)
+            DrawVert(pixels, bytesPerRow, x, ay, cy, 0xFF0088FF);
+    }
 
     /* 
     * walls are:
