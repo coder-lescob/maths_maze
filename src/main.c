@@ -24,6 +24,7 @@ void RenderMaze(uint32_t *pixels, int bytesPerRow, VideoStatus *status) {
 
     uint cellX = player->x / CellSize, cellY  = player->y / CellSize;
 
+    // collsion data
     int leftcollision  = player->x <= cellX * CellSize + HalfPlayerSize;
     int rightcollision = player->x >= (cellX + 1) * CellSize - HalfPlayerSize;
     int topcollison    = player->y >= (cellY + 1) * CellSize - HalfPlayerSize;
