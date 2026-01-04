@@ -16,6 +16,11 @@ void UpdatePlayer(Player *player, const Uint8 *keyboard, Maze *maze) {
     if (keyboard[SDL_SCANCODE_A])
         player->x--;
 
+    // resolve collisons of player with walls
+    ResolveCollisons(player, maze);
+}
+
+void ResolveCollisons(Player *player, Maze *maze) {
     uint cellX = (uint32_t)player->x / CellSize, cellY  = (uint32_t)player->y / CellSize;
     uint cellIdx = cellX + cellY * maze->width;
 
