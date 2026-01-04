@@ -4,14 +4,10 @@
 #include "genmaze.h"
 #include "renderer.h"
 #include "player.h"
+#include "const.h"
 
 static Maze *maze;
 static Player *player;
-
-#define CellSize 16ul
-#define IterationsPerFrame 10ul
-#define PlayerSize 6
-#define HalfPlayerSize PlayerSize / 2
 
 void RenderMaze(uint32_t *pixels, int bytesPerRow, VideoStatus *status) {
     // clear the screen
@@ -28,13 +24,20 @@ void RenderMaze(uint32_t *pixels, int bytesPerRow, VideoStatus *status) {
 
     uint cellX = player->x / CellSize, cellY  = player->y / CellSize;
 
-    uint cellIdx = cellX + cellY * maze->width;
+    int leftcollision  = player->x <= cellX * CellSize + HalfPlayerSize;
+    int rightcollision = player->x >= (cellX + 1) * CellSize - HalfPlayerSize;
+    int topcollison    = player->y >= (cellY + 1) * CellSize - HalfPlayerSize;
+    int bottomcollison = player->y <= cellY * CellSize + HalfPlayerSize;
 
     // loop over each cell
     for (uint y = 0; y < maze->height; y++) {
         for (uint x = 0; x < maze->width; x++) {
             // renders it
-            RenderCell(maze, CellSize, x, y, pixels, bytesPerRow, cellIdx == x + y * maze->width);
+            int playercell      = x == cellX && y == cellY;
+            RenderCell(maze, CellSize, x, y, pixels, bytesPerRow, 
+                (playercell << 4) | ((playercell && leftcollision) << 3) | ((playercell && rightcollision) << 2) | 
+                ((playercell && bottomcollison) << 1) | (playercell && topcollison)
+            );
         }
     }
 
@@ -51,7 +54,7 @@ void Update(VideoStatus *status) {
             for (uint i = 0; i < IterationsPerFrame; i++)
                 Iteration(maze);
 
-    UpdatePlayer(player, status->keyboardState);
+    UpdatePlayer(player, status->keyboardState, maze);
 }
 
 void HandleEvents(VideoStatus *status) {
