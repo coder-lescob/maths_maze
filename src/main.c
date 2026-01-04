@@ -43,7 +43,7 @@ void RenderMaze(uint32_t *pixels, int bytesPerRow, VideoStatus *status) {
     }
 
     if (player->x >= HalfPlayerSize && player->x + HalfPlayerSize < status->vp_width && player->y >= HalfPlayerSize && player->y + HalfPlayerSize < status->vp_height){
-        // render player pix
+        // render player pixels
         for (int i = -HalfPlayerSize; i < HalfPlayerSize; i++)
             DrawVert(pixels, bytesPerRow, player->x + i, player->y - HalfPlayerSize, player->y + HalfPlayerSize, 0xFFFF0000);
     }
