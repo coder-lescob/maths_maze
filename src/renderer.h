@@ -27,7 +27,7 @@ typedef struct VideoStatus {
 /*
 * Polls the keyboard and stores it in the keyboard status field
 */
-void PollKeyboard();
+void PollKeyboard(void);
 
 /*
 * Init video chanel.

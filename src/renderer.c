@@ -45,9 +45,9 @@ VideoStatus InitRendering(char *name, uint32_t width, uint32_t height) {
 }
 
 void FrameUpdate(VideoStatus *status) {
-    SDL_RenderClear(status->renderer);                            // fullscreen clear
-    SDL_RenderCopy(status->renderer, status->screen, NULL, NULL); // fullscreen copy
-    SDL_RenderPresent(status->renderer);                          // swap buffers
+    SDL_RenderClear  (status->renderer);                             // fullscreen clear
+    SDL_RenderCopy   (status->renderer, status->screen, NULL, NULL); // fullscreen copy
+    SDL_RenderPresent(status->renderer);                             // swap buffers
 
     SDL_Delay(16); // ~60 FPS
     status->frameCount++;
@@ -63,7 +63,7 @@ void PollEvents(VideoStatus *status, void (*HandleEvents)(VideoStatus *)) {
     }
 }
 
-void PollKeyboard() {
+void PollKeyboard(void) {
     // polls SDL internal keyboard object
     // since status.keyboadState points 
     // to this object it is updating the keyboard
